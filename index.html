@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulación de colas - Aeropueto ✈</title>
+    <!-- Agrega la referencia a Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        body {
+            padding: 10px;
+            background-color: #f3f4f6;
+        }
+
+        canvas {
+            width: 100%;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin-left: 20px;
+            width: 300px;
+            /* Ajusta el ancho de la tabla según tus necesidades */
+        }
+        .tabla-historial{
+            height: 700px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+        }
+    </style>
+</head>
+
+<body class="container mt-4">
+
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <!-- Agrega el formulario -->
+            <h1>Aeropueto ✈</h1>
+            <h1>Simulación de colas</h1>
+            <h5><b>Por:</b> Tomas Felipe Jimenez Medina y Anthony Ramos Camacho</h5>
+            <hr>
+            <div class="card">
+                <div class="card-header">
+                    📑 Formulario de frecuencia
+                </div>
+                <div class="card-body">
+                    <form id="configForm">
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="frecuenciaLlegada" placeholder="3000" value="3000">
+                            <label for="frecuenciaLlegada">Frecuencia de Llegada (ms)</label>
+                          </div>
+                          <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="frecuenciaAtencion" placeholder="5000" value="5000">
+                            <label for="frecuenciaAtencion">Frecuencia de Atención (ms)</label>
+                          </div>
+                        <button type="button" class="btn btn-primary" onclick="actualizarFrecuencias()">Actualizar
+                            Frecuencias</button>
+                    </form>
+                </div>
+            </div>
+            <br>
+            <div class="card">
+                <div class="card-header">
+                  Vista grafica
+                </div>
+                <div class="card-body">
+                    <canvas id="filaCanvas" width="1000" height="150"></canvas>
+                </div>
+              </div>            
+        </div>
+        <div class="col-md-6 tabla-historial">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Color</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col">Pasajero</th>
+                        <th scope="col">Proceso</th>
+                    </tr>
+                </thead>
+                <tbody id="historialTablaBody">
+                    <!-- Contenido de la tabla se agregará dinámicamente aquí -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"
+        integrity="sha384-csChZofP0kSlSM9OYA0XjT3UzbhK1pMh1FUR1GJ7ZClnJsBM9z+6iSWQzTVm2bNd"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <script>
+        const canvas = document.getElementById('filaCanvas');
+        const ctx = canvas.getContext('2d');
+        const historialTablaBody = document.getElementById('historialTablaBody');
+        const configForm = document.getElementById('configForm');
+
+        let frecuenciaLlegada = 3000; // Valor predeterminado
+        let frecuenciaAtencion = 5000; // Valor predeterminado
+
+        function actualizarFrecuencias() {
+            frecuenciaLlegada = parseInt(document.getElementById('frecuenciaLlegada').value);
+            frecuenciaAtencion = parseInt(document.getElementById('frecuenciaAtencion').value);
+        }
+
+        class Aeropuerto {
+            constructor() {
+                this.fila = [];
+                this.historial = [];
+            }
+
+            async llegadaPasajero(nombre) {
+                const resultado = await this.revisarDocumentos(nombre);
+                const estado = resultado ? 'En regla ✔' : 'No en regla ❌';
+
+                this.fila.push({ nombre, estado });
+                this.historial.push({ color: resultado ? '#0095DD' : '#FF0000', circulo: 'Ingreso 🏃‍♂️', nombre, estado });
+                this.actualizarHistorial();
+                this.dibujarFila();
+            }
+
+            async revisarDocumentos(nombre) {
+                // Simular tiempo de revisión de documentos
+                await this.sleep(Math.random() * frecuenciaAtencion);
+                //await this.sleep(Math.random() * 2000 + 1000);
+
+                // Devolver un resultado aleatorio (true si los documentos están en regla, false si no)
+                return Math.random() < 0.8;
+            }
+
+            abordarVuelo(nombre) {
+                const pasajero = this.fila.find(p => p.nombre === nombre);
+                if (pasajero) {
+                    pasajero.estado = 'Abordando ✈';
+                    this.historial.push({ color: '#008000', circulo: 'Abordaje ✈', nombre, estado: pasajero.estado });
+                    this.actualizarHistorial();
+                    this.dibujarFila();
+
+                    // Después de 2 segundos, quitar al pasajero del canvas
+                    setTimeout(() => {
+                        this.quitarPasajeroDelCanvas(nombre);
+                    }, 2000);
+                }
+            }
+            quitarPasajeroDelCanvas(nombre) {
+                const index = this.fila.findIndex(p => p.nombre === nombre);
+                if (index !== -1) {
+                    this.fila.splice(index, 1);
+                    this.dibujarFila();
+                }
+            }
+            abandonarAeropuerto(nombre) {
+                const index = this.fila.findIndex(p => p.nombre === nombre);
+                if (index !== -1) {
+                    const pasajero = this.fila.splice(index, 1)[0];
+                    this.historial.push({ color: '#FF0000', circulo: 'Abandono 😞', nombre: pasajero.nombre, estado: 'Rechazado 🚫' });
+                    this.actualizarHistorial();
+                }
+
+                this.dibujarFila();
+            }
+
+            // Modifica la función dibujarFila para considerar el tiempo de permanencia:
+
+            dibujarFila() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                this.fila.forEach((pasajero, index) => {
+                    const x = index * 100 + 40;
+                    const y = 70;
+
+                    ctx.beginPath();
+                    ctx.arc(x, y, 40, 0, 2 * Math.PI);
+                    ctx.fillStyle = pasajero.estado === 'En regla ✔' ? '#0095DD' : (pasajero.estado === 'Abordando ✈' ? '#008000' : '#FF0000');
+                    ctx.fill();
+                    ctx.closePath();
+
+                    ctx.font = '25px Arial';
+                    ctx.fillStyle = '#000';
+                    //ctx.fillText(`${pasajero.nombre} - ${pasajero.estado}`, x - 20, y + 25);
+                    ctx.fillText(`${pasajero.nombre}`, x - 30, y + 70);
+                });
+            }
+
+            actualizarHistorial() {
+                const ultimaFila = this.historial[this.historial.length - 1];
+                const row = historialTablaBody.insertRow(0); // Inserta al principio de la tabla
+                row.insertCell(0).innerHTML = `<div style="width: 20px; height: 20px; background-color: ${ultimaFila.color};"></div>`;
+                row.insertCell(1).innerHTML = ultimaFila.circulo;
+                row.insertCell(2).innerHTML = ultimaFila.nombre;
+                row.insertCell(3).innerHTML = ultimaFila.estado;
+            }
+
+            sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+        }
+
+        const aeropuerto = new Aeropuerto();
+
+        function llegadaPasajero() {
+            const nombres = ["Jose", "Maria", "Carlos", "Martin", "Anthony", "Tomas", "Oscar", "Kevin", "Clara", "Alicia", "Goku", "Luffy", "Petro", "Marcos", "Michael", "Rosa", "Daniela", "Paula", "Patricia"];
+            const nombre = nombres[Math.floor(Math.random() * nombres.length)];
+            aeropuerto.llegadaPasajero(nombre);
+        }
+
+        setInterval(llegadaPasajero, frecuenciaLlegada);
+
+        function abordarVuelo() {
+            const pasajero = aeropuerto.fila.find(p => p.estado === 'En regla ✔');
+            if (pasajero) {
+                aeropuerto.abordarVuelo(pasajero.nombre);
+            }
+        }
+
+        setInterval(abordarVuelo, frecuenciaAtencion);
+
+        function abandonarAeropuerto() {
+            const pasajero = aeropuerto.fila.find(p => p.estado === 'No en regla ❌');
+            if (pasajero) {
+                aeropuerto.abandonarAeropuerto(pasajero.nombre);
+            }
+        }
+
+        setInterval(abandonarAeropuerto, frecuenciaAtencion);
+    </script>
+</body>
+
+</html>
