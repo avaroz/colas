@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulación de colas - Aeropueto ✈</title>
+    <title>Simulación de colas - Aeropuerto ✈</title>
     <!-- Agrega la referencia a Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
@@ -20,11 +20,11 @@
 
         table {
             border-collapse: collapse;
-            margin-left: 20px;
             width: 300px;
             /* Ajusta el ancho de la tabla según tus necesidades */
         }
-        .tabla-historial{
+
+        .tabla-historial {
             height: 700px;
             overflow-y: scroll;
             overflow-x: hidden;
@@ -38,53 +38,471 @@
     <div class="row mt-4">
         <div class="col-md-6">
             <!-- Agrega el formulario -->
-            <h1>Aeropueto ✈</h1>
+            <h1>Aeropuerto ✈</h1>
             <h1>Simulación de colas</h1>
             <h5><b>Por:</b> Tomas Felipe Jimenez Medina y Anthony Ramos Camacho</h5>
             <hr>
             <div class="card">
                 <div class="card-header">
-                    📑 Formulario de frecuencia
+                    📑 Formulario de datos
                 </div>
                 <div class="card-body">
                     <form id="configForm">
-                        <div class="form-floating mb-3">
-                            <input type="number" class="form-control" id="frecuenciaLlegada" placeholder="3000" value="3000">
-                            <label for="frecuenciaLlegada">Frecuencia de Llegada (ms)</label>
-                          </div>
-                          <div class="form-floating mb-3">
-                            <input type="number" class="form-control" id="frecuenciaAtencion" placeholder="5000" value="5000">
-                            <label for="frecuenciaAtencion">Frecuencia de Atención (ms)</label>
-                          </div>
-                        <button type="button" class="btn btn-primary" onclick="actualizarFrecuencias()">Actualizar
-                            Frecuencias</button>
+                        <div id="modulo_formulario_elegirmodelo">
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="tipomodelo" aria-label="Default select example">
+                                    <option selected>Elige el tipo de modelo</option>
+                                    <option value="mm1">M/M/1</option>
+                                    <option value="mmm">M/M/m</option>
+                                </select>
+                                <label for="tipomodelo">Tipo de modelo</label>
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="elegirmodelo()">✅ Elegir
+                                modelo</button>
+                        </div>
+                        <br>
+                        <div id="modulo_formulario_modelo_mm1" style="display: none;">
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" id="tasallegada_mm1" placeholder="3"
+                                    value="2">
+                                <label for="tasallegada_mm1">Tasa de Llegada (λ)</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" id="tasaatencion_mm1" placeholder="5"
+                                    value="3">
+                                <label for="tasaatencion_mm1">Tasa de Atención (μ)</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" id="probabilidadk_mm1" placeholder="5"
+                                    value="5">
+                                <label for="probabilidadk_mm1">Probabilidad pasajeros k</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" id="costosespera_mm1" placeholder="5"
+                                    value="50">
+                                <label for="costosespera_mm1">Costo de espera $</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" id="costosservicio_mm1" placeholder="5"
+                                    value="15">
+                                <label for="costosservicio_mm1">Costo de servicio $</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" id="costohoras_mm1" placeholder="5" value="8">
+                                <label for="costohoras_mm1">Costo por espera en horas</label>
+                            </div>
+                        </div>
+                        <div id="modulo_formulario_modelo_mmm" style="display: none;">
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" id="tasallegada_mmm" placeholder="3"
+                                    value="2">
+                                <label for="tasallegada_mmm">Tasa de Llegada (λ)</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" id="tasaatencion_mmm" placeholder="5"
+                                    value="3">
+                                <label for="tasaatencion_mmm">Tasa de Atención por canal (μ)</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" id="servidores_mmm" placeholder="3" value="2">
+                                <label for="servidores_mmm">Número de servidores disponibles (m)</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" id="costosespera_mmm" placeholder="5"
+                                    value="50">
+                                <label for="costosespera_mmm">Costo de espera $</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" id="costosservicio_mmm" placeholder="5"
+                                    value="15">
+                                <label for="costoservicio_mmm">Costo de servicio $</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" id="costohoras_mmm" placeholder="5" value="8">
+                                <label for="costohoras_mmm">Costo por espera en horas</label>
+                            </div>
+                        </div>
+                        <div id="modulo_formulario_modelo_md1" style="display: none;">
+
+                        </div>
+                        <hr>
+                        <div id="modulo_formulario_botones" style="display: none;">
+                            <button type="button" class="btn btn-primary" id="btn_cargar" onclick="actualizardatos()">🔁 Cargar
+                                datos</button>
+                            <button type="button" class="btn btn-success" id="btn_simular" style="display: none;" onclick="iniciarSimulacion()">▶ Iniciar
+                                Simulación</button>
+                            <button type="button" class="btn btn-danger" id="btn_pausar" style="display: none;" onclick="detenerSimulacion()">⏺ Detener
+                                Simulación</button>
+                        </div>
                     </form>
                 </div>
             </div>
             <br>
             <div class="card">
                 <div class="card-header">
-                  Vista grafica
+                    Vista grafica
                 </div>
                 <div class="card-body">
                     <canvas id="filaCanvas" width="1000" height="150"></canvas>
                 </div>
-              </div>            
+            </div>
         </div>
-        <div class="col-md-6 tabla-historial">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th scope="col">Color</th>
-                        <th scope="col">Estado</th>
-                        <th scope="col">Pasajero</th>
-                        <th scope="col">Proceso</th>
-                    </tr>
-                </thead>
-                <tbody id="historialTablaBody">
-                    <!-- Contenido de la tabla se agregará dinámicamente aquí -->
-                </tbody>
-            </table>
+        <div class="col-md-6">
+            <div class="card" id="modulo_mostrarresultados_mm1" style="display: none;">
+                <div class="card-header">
+                    Resultados por M/M/1
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0">\[L = {λ \over μ−λ}\]</strong>
+                                    </p>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0" id="mostrarresultado_l_mm1">Sin datos</strong>
+                                        <span class="text-secondary">Número promedio de pasajeros en el sistema</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0">\[ L_q = \frac{\lambda^2}{\mu(\mu - \lambda)}
+                                            \]</strong>
+                                    </p>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0" id="mostrarresultado_lq_mm1">Sin datos</strong>
+                                        <span class="text-secondary">Número promedio de pasajeros en la cola</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0">\[ W = \frac{1}{\mu - \lambda} \]</strong>
+                                    </p>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0" id="mostrarresultado_w_mm1">Sin datos</strong>
+                                        <span class="text-secondary">Tiempo promedio pasa en el sistema (tiempo en fila
+                                            +
+                                            atención)</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0">\[ W_q = \frac{\lambda}{\mu(\mu - \lambda)}
+                                            \]</strong>
+                                    </p>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0" id="mostrarresultado_wq_mm1">Sin datos</strong>
+                                        <span class="text-secondary">Tiempo promedio que pasa el pasajero esperando en la
+                                            cola</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0">\[ \rho = \frac{\lambda}{\mu} \]</strong>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0" id="mostrarresultado_rho_mm1">Sin datos</strong>
+                                        <span class="text-secondary">la probabilidad de que se esté utilizando la
+                                            instalación
+                                            del servicio.</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0">\[ P_0 = 1 - \rho \]</strong>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0" id="mostrarresultado_P0_mm1">Sin datos</strong>
+                                        <span class="text-secondary">La probabilidad de que el sistema esté vacío (sin
+                                            pasajeros).</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0">\[ P_{n>k} = (\rho)^{k+1} \]</strong>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0" id="mostrarresultado_Pn_mm1">Sin datos</strong>
+                                        <span class="text-secondary">La probabilidad de que el número de pasajeros en el
+                                            sistema
+                                            sea mayor que k</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <hr>
+                        <h4>Determinar costos</h4>
+                        <li class="list-group-item">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0">(# horas por día)/WqCw</strong>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0" id="mostrarresultado_costodiarioespera_mm1">Sin
+                                            datos</strong>
+                                        <span class="text-secondary">Costo de espera total diario</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0">(# horas por día)/mCs</strong>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0"
+                                            id="mostrarresultado_costodiarioservicio_mm1">Sin datos</strong>
+                                        <span class="text-secondary">Costo total diario del servicio</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0">Costo espera + Costo servicio</strong>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0" id="mostrarresultado_costototalsistema_mm1">Sin
+                                            datos</strong>
+                                        <span class="text-secondary">Costo total diario del sistema de colas</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card" id="modulo_mostrarresultados_mmm" style="display: none;">
+                <div class="card-header">
+                    Resultados por M/M/m
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0">
+                                            <img src="./imagenes/P0_mmm.PNG" alt="P0" width="100%">
+                                        </strong>
+                                    </p>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0" id="mostrarresultado_P0_mmm">Sin datos</strong>
+                                        <span class="text-secondary">Probabilidad de 0 pasajeros en el sistema</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0">
+                                            <img src="./imagenes/l_mmm.PNG" alt="L" width="100%">
+                                        </strong>
+                                    </p>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0" id="mostrarresultado_L_mmm">Sin datos</strong>
+                                        <span class="text-secondary">Número promedio de pasajeros en el sistema</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0">
+                                            <img src="./imagenes/w_mmm.PNG" alt="W" width="100%">
+                                        </strong>
+                                    </p>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0" id="mostrarresultado_W_mmm">Sin datos</strong>
+                                        <span class="text-secondary">Tiempo promedio pasa en el sistema (tiempo en fila
+                                            + atención)</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0">\[ Lq = L - \frac {\lambda} {\mu} \]</strong>
+                                    </p>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0" id="mostrarresultado_Lq_mmm">Sin datos</strong>
+                                        <span class="text-secondary">Promedio de clientes esperando en la cola.</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0">\[ Wq = W - \frac 1 {\mu} = \frac {Lq} {\lambda}
+                                            \]</strong>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0" id="mostrarresultado_Wq_mmm">Sin datos</strong>
+                                        <span class="text-secondary">Tiempo promedio pasajero pasa en la cola.</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0">\[ \rho = \frac{\lambda} {m * \mu} \]</strong>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0" id="mostrarresultado_p_mmm">Sin datos</strong>
+                                        <span class="text-secondary">Tasa de utilización</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <hr>
+                        <h4>Determinar costos</h4>
+                        <li class="list-group-item">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0">(# horas por día)/WqCw</strong>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0" id="mostrarresultado_costodiarioespera_mmm">Sin
+                                            datos</strong>
+                                        <span class="text-secondary">Costo de espera total diario</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0">(# horas por día)/mCs</strong>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0"
+                                            id="mostrarresultado_costodiarioservicio_mmm">Sin datos</strong>
+                                        <span class="text-secondary">Costo total diario del servicio</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0">Costo espera + Costo servicio</strong>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="d-block text-decoration-none">
+                                        <strong class="d-block h5 mb-0" id="mostrarresultado_costototalsistema_mmm">Sin
+                                            datos</strong>
+                                        <span class="text-secondary">Costo total diario del sistema de colas</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <br>
+            <div class="card tabla-historial" id="modulo_tablasimulacion">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">Color</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Pasajero</th>
+                            <th scope="col">Proceso</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historialTablaBody">
+                        <!-- Contenido de la tabla se agregará dinámicamente aquí -->
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -103,12 +521,359 @@
         const historialTablaBody = document.getElementById('historialTablaBody');
         const configForm = document.getElementById('configForm');
 
-        let frecuenciaLlegada = 3000; // Valor predeterminado
-        let frecuenciaAtencion = 5000; // Valor predeterminado
+        let tipomodelo = ""; //mm1 mmm md1
+        let tasallegada_dato = 0; // Valor normal
+        let tasallegada_simulacion = 0; // Valor milisegundos
+        let tasaatencion_dato = 0; // Valor normal
+        let tasaatencion_simulacion = 0; // Valor predeterminado
+        let probabilidadk_dato = 0; // Valor normal
+        let canalesabiertos = 0; //número de canales abiertos
 
-        function actualizarFrecuencias() {
-            frecuenciaLlegada = parseInt(document.getElementById('frecuenciaLlegada').value);
-            frecuenciaAtencion = parseInt(document.getElementById('frecuenciaAtencion').value);
+        let costoespera = 0; //costo de espera
+        let costoservicio = 0; //costo del servicio
+        let costohoras = 0; //dato para calcular el costo en horas
+
+        let simulacionActiva = false; //Valor simulación activa
+
+        //Variables poder pausar simulación
+        let llegadaIntervalId;
+        let abordarIntervalId;
+        let abandonarIntervalId;
+
+        function elegirmodelo() {
+            document.getElementById("modulo_formulario_botones").style.display = "block";
+            tipomodelo = document.getElementById('tipomodelo').value;
+            if (tipomodelo == "mm1") {
+                document.getElementById("modulo_formulario_modelo_mm1").style.display = "block";
+                document.getElementById("modulo_formulario_modelo_mmm").style.display = "none";
+                document.getElementById("modulo_formulario_modelo_md1").style.display = "none";
+            }
+            if (tipomodelo == "mmm") {
+                document.getElementById("modulo_formulario_modelo_mm1").style.display = "none";
+                document.getElementById("modulo_formulario_modelo_mmm").style.display = "block";
+                document.getElementById("modulo_formulario_modelo_md1").style.display = "none";
+            }
+            if (tipomodelo == "md1") {
+                document.getElementById("modulo_formulario_modelo_mm1").style.display = "none";
+                document.getElementById("modulo_formulario_modelo_mmm").style.display = "none";
+                document.getElementById("modulo_formulario_modelo_md1").style.display = "block";
+            }
+        }
+
+        function actualizardatos() {
+            document.getElementById("btn_simular").style.display = "initial";
+            if (tipomodelo == "mm1") {
+                tasallegada_dato = parseInt(document.getElementById('tasallegada_mm1').value);
+                tasallegada_simulacion = 1000 * tasallegada_dato;
+                tasaatencion_dato = parseInt(document.getElementById('tasaatencion_mm1').value);
+                tasaatencion_simulacion = 1000 * tasaatencion_dato;
+                probabilidadk = parseInt(document.getElementById('probabilidadk_mm1').value);
+
+                costoespera = parseInt(document.getElementById('costosespera_mm1').value);
+                costoservicio = parseInt(document.getElementById('costosservicio_mm1').value);
+                costohoras = parseInt(document.getElementById('costohoras_mm1').value);
+            }
+            if (tipomodelo == "mmm") {
+                canalesabiertos = parseInt(document.getElementById('servidores_mmm').value);
+
+                tasallegada_dato = parseInt(document.getElementById('tasallegada_mmm').value);
+                tasallegada_simulacion = 1000 * tasallegada_dato;
+                tasaatencion_dato = parseInt(document.getElementById('tasaatencion_mmm').value);
+                tasaatencion_simulacion = 1000 * tasaatencion_dato;
+
+                costoespera = parseInt(document.getElementById('costosespera_mmm').value);
+                costoservicio = parseInt(document.getElementById('costosservicio_mmm').value);
+                costohoras = parseInt(document.getElementById('costohoras_mmm').value);
+
+            }
+
+        }
+
+        function iniciarSimulacion() {
+            if (!simulacionActiva) {
+                simulacionActiva = true;
+                document.getElementById("btn_pausar").style.display = "initial";
+                llegadaIntervalId = setInterval(llegadaPasajero, tasallegada_simulacion);
+                abordarIntervalId = setInterval(abordarVuelo, tasaatencion_simulacion);
+                abandonarIntervalId = setInterval(abandonarAeropuerto, tasaatencion_simulacion);
+            }
+        }
+
+        function detenerSimulacion() {
+            simulacionActiva = false;
+            clearInterval(llegadaIntervalId);
+            clearInterval(abordarIntervalId);
+            clearInterval(abandonarIntervalId);
+
+            document.getElementById("modulo_tablasimulacion").style.display = "none";
+            modulo_tablasimulacion
+            if (tipomodelo == "mm1") {
+                resolver_mm1(tasallegada_dato, tasaatencion_dato, probabilidadk)
+            }
+            if (tipomodelo == "mmm") {
+                resolver_mmm(tasallegada_dato, tasaatencion_dato, canalesabiertos)
+            }
+
+        }
+
+        //////////////////////////////////////////////
+        //Calculos por M/M/1
+        //////////////////////////////////////////////
+
+        //L - Número promedio de clientes en el sistema
+        function calcular_L_mm1(tasaLlegada, tasaServicio) {
+            // Asegurarse de que la tasa de llegada y la tasa de servicio sean números positivos
+            tasaLlegada = Math.max(0, tasaLlegada);
+            tasaServicio = Math.max(0, tasaServicio);
+
+            // Calcular L utilizando la fórmula M/M/1
+            const denominador = tasaServicio - tasaLlegada;
+
+            // Evitar dividir por cero y asegurar que la tasa de llegada sea menor que la tasa de servicio
+            if (denominador !== 0 && tasaLlegada < tasaServicio) {
+                const L = tasaLlegada / denominador;
+                return L;
+            } else {
+                // En caso de condiciones no válidas, devuelve NaN
+                return NaN;
+            }
+        }
+        //Lq - Numero promedio de clientes en la cola
+        function calcular_Lq_mm1(tasaLlegada, tasaServicio) {
+            // Asegurarse de que la tasa de llegada y la tasa de servicio sean números positivos
+            tasaLlegada = Math.max(0, tasaLlegada);
+            tasaServicio = Math.max(0, tasaServicio);
+
+            // Calcular Lq utilizando la fórmula M/M/1
+            const numerador = Math.pow(tasaLlegada, 2);
+            const denominador = tasaServicio * (tasaServicio - tasaLlegada);
+
+            // Evitar dividir por cero y asegurar que la tasa de llegada sea menor que la tasa de servicio
+            if (denominador !== 0 && tasaLlegada < tasaServicio) {
+                const Lq = numerador / denominador;
+                return Lq;
+            } else {
+                // En caso de condiciones no válidas, devuelve NaN
+                return NaN;
+            }
+        }
+        //W - Tiempo promedio pasa en el sistema (tiempo en fila + atención)
+        function calcular_W_mm1(tasaLlegada, tasaServicio) {
+            // Asegurarse de que la tasa de llegada y la tasa de servicio sean números positivos
+            tasaLlegada = Math.max(0, tasaLlegada);
+            tasaServicio = Math.max(0, tasaServicio);
+
+            // Calcular W utilizando la fórmula M/M/1
+            const denominador = tasaServicio - tasaLlegada;
+
+            // Evitar dividir por cero y asegurar que la tasa de llegada sea menor que la tasa de servicio
+            if (denominador !== 0 && tasaLlegada < tasaServicio) {
+                const W = 1 / denominador;
+                return W;
+            } else {
+                // En caso de condiciones no válidas, devuelve NaN
+                return NaN;
+            }
+        }
+        //Wq - Tiempo promedio que pasa el cliente esperando en la cola
+        function calcular_Wq_mm1(tasaLlegada, tasaServicio) {
+            // Asegurarse de que la tasa de llegada y la tasa de servicio sean números positivos
+            tasaLlegada = Math.max(0, tasaLlegada);
+            tasaServicio = Math.max(0, tasaServicio);
+
+            // Calcular Wq utilizando la fórmula M/M/1
+            const numerador = tasaLlegada;
+            const denominador = tasaServicio * (tasaServicio - tasaLlegada);
+
+            // Evitar dividir por cero y asegurar que la tasa de llegada sea menor que la tasa de servicio
+            if (denominador !== 0 && tasaLlegada < tasaServicio) {
+                const Wq = numerador / denominador;
+                return Wq;
+            } else {
+                // En caso de condiciones no válidas, devuelve NaN
+                return NaN;
+            }
+        }
+        //ρ (factor de utilización) -  la probabilidad de que se esté utilizando la instalación del servicio.
+        function calcular_P_mm1(tasaLlegada, tasaServicio) {
+            // Asegurarse de que la tasa de llegada y la tasa de servicio sean números positivos
+            tasaLlegada = Math.max(0, tasaLlegada);
+            tasaServicio = Math.max(0, tasaServicio);
+
+            // Calcular el factor de utilización (rho) utilizando la fórmula M/M/1
+            const rho = tasaLlegada / tasaServicio;
+            return rho;
+        }
+        //P0 - Probabilidad de que nadie esté en el sistema o porcentaje de tiempo ocioso
+        function calcular_P0_mm1(tasaLlegada, tasaServicio) {
+            // Asegurarse de que la tasa de llegada y la tasa de servicio sean números positivos
+            tasaLlegada = Math.max(0, tasaLlegada);
+            tasaServicio = Math.max(0, tasaServicio);
+
+            // Calcular el factor de utilización (rho) utilizando la fórmula M/M/1
+            const rho = calcular_P_mm1(tasaLlegada, tasaServicio);
+
+            // Calcular el porcentaje de tiempo ocioso (P0) utilizando la fórmula M/M/1
+            const P0 = 1 - rho;
+            return P0;
+        }
+        //P n>k - Probabilidad de que el número de clientes en el sistema sea mayor que k
+        function calcular_Pnk_mm1(tasaLlegada, tasaServicio, k) {
+            // Asegurarse de que la tasa de llegada y la tasa de servicio sean números positivos
+            tasaLlegada = Math.max(0, tasaLlegada);
+            tasaServicio = Math.max(0, tasaServicio);
+
+            // Calcular el factor de utilización (rho) utilizando la fórmula M/M/1
+            const rho = tasaLlegada / tasaServicio;
+
+            // Calcular la probabilidad P_{n>k} utilizando la aproximación para M/M/1
+            const Pnk = Math.pow(rho, k + 1);
+            return Pnk;
+        }
+
+        function calcular_costodiarioespera_mm1(costoespera, costohoras, tasaLlegada, tasaServicio, servidores) {
+            costodiarioespera = costohoras * tasaLlegada * calcular_Wq_mm1(tasaLlegada, tasaServicio) * costoespera;
+            return costodiarioespera
+        }
+        function resolver_mm1(tasaLlegada, tasaServicio, k) {
+            //Resolver paso a paso
+            const resultadoL = calcular_L_mm1(tasaLlegada, tasaServicio);
+            const resultadoLq = calcular_Lq_mm1(tasaLlegada, tasaServicio);
+            const resultadoW = calcular_W_mm1(tasaLlegada, tasaServicio);
+            const resultadoWq = calcular_Wq_mm1(tasaLlegada, tasaServicio);
+            const resultadoP = calcular_P_mm1(tasaLlegada, tasaServicio);
+            const resultadoP0 = calcular_P0_mm1(tasaLlegada, tasaServicio);
+            const resultadoPnk = calcular_Pnk_mm1(tasaLlegada, tasaServicio, k);
+
+            const resultado_costoespera = calcular_costodiarioespera_mm1(costoespera, costohoras, tasaLlegada, tasaServicio, 1);
+            const resultado_costoservicio = calcular_costodiarioservicio_mmm(costoservicio, costohoras, 1);
+            const resultado_costosistema = calcular_costodiariosistema_mmm();
+
+            //Mostrar los datos
+            document.getElementById("modulo_mostrarresultados_mm1").style.display = "block";
+            document.getElementById("modulo_mostrarresultados_mmm").style.display = "none";
+            document.getElementById("mostrarresultado_l_mm1").innerHTML = resultadoL + " clientes";
+            document.getElementById("mostrarresultado_lq_mm1").innerHTML = resultadoLq + " clientes";
+            if (resultadoW < 1) {
+                document.getElementById("mostrarresultado_w_mm1").innerHTML = resultadoW + "<hr>" + (resultadoW * 60) + " minutos";
+            } else {
+                document.getElementById("mostrarresultado_w_mm1").innerHTML = resultadoW + " horas";
+            }
+            if (resultadoWq < 1) {
+                document.getElementById("mostrarresultado_wq_mm1").innerHTML = resultadoWq + "<hr>" + (resultadoWq * 60) + " minutos";
+            } else {
+                document.getElementById("mostrarresultado_wq_mm1").innerHTML = resultadoWq + " horas";
+            }
+
+            document.getElementById("mostrarresultado_rho_mm1").innerHTML = resultadoP + "<hr>" + (resultadoP * 100) + "%";
+            document.getElementById("mostrarresultado_P0_mm1").innerHTML = resultadoP0 + "<hr>" + (resultadoP0 * 100) + "%";
+            document.getElementById("mostrarresultado_Pn_mm1").innerHTML = resultadoPnk.toFixed(3) + "<hr>" + (resultadoPnk.toFixed(3) * 100) + "%";
+
+            document.getElementById("mostrarresultado_costodiarioespera_mm1").innerHTML = "$" + resultado_costoespera.toFixed(3);
+            document.getElementById("mostrarresultado_costodiarioservicio_mm1").innerHTML = "$" + resultado_costoservicio.toFixed(3);
+            document.getElementById("mostrarresultado_costototalsistema_mm1").innerHTML = "$" + resultado_costosistema.toFixed(3);
+        }
+
+        //////////////////////////////////////////////
+        //Calculos por M/M/m
+        //////////////////////////////////////////////
+
+        //para resolver los n!
+        function factorial(n) {
+            if (n === 0 || n === 1) {
+                return 1;
+            }
+            return n * factorial(n - 1);
+        }
+        //P0 - Probabilidad de que haya 0 clientes en el sistema
+        function calcular_P0_mmm(tasaLlegada, tasaServicio, servidores) {
+            const rho = tasaLlegada / tasaServicio;
+            let sum = 0;
+            let sum2 = (1 / factorial(servidores) * Math.pow(rho, 2)) * ((servidores * tasaServicio) / (servidores * tasaServicio - tasaLlegada));
+            for (let i = 0; i < servidores; i++) {
+                sum += 1 / factorial(i) * Math.pow(rho, i);
+            }
+            return 1 / (sum + sum2);
+        }
+        //L - número promedio de clientes en el sistema
+        function calcular_L_mmm(tasaLlegada, tasaServicio, servidores) {
+            const rho = tasaLlegada / tasaServicio;
+            let sum = tasaLlegada * tasaServicio * (Math.pow(rho, servidores));
+            let sum2 = factorial(servidores - 1);
+            let sum3 = Math.pow(servidores * tasaServicio - tasaLlegada, 2);
+            return (sum / (sum2 * sum3)) * calcular_P0_mmm(tasaLlegada, tasaServicio, servidores) + rho;
+        }
+        //W - Tiempo promedio que un cliente pasa en el sistema (fila + atención)
+        function calcular_w_mmm(tasaLlegada, tasaServicio, servidores) {
+            return calcular_L_mmm(tasaLlegada, tasaServicio, servidores) / tasaLlegada
+        }
+        //Lq - número promedio de clientes en la cola
+        function calcular_Lq_mmm(tasaLlegada, tasaServicio, servidores) {
+            const rho = tasaLlegada / tasaServicio;
+            return calcular_L_mmm(tasaLlegada, tasaServicio, servidores) - rho;
+        }
+        //Wq - Tiempo promedio que un cliente se encuentra en la cola
+        function calcular_Wq_mmm(tasaLlegada, tasaServicio, servidores) {
+            return calcular_Lq_mmm(tasaLlegada, tasaServicio, servidores) / tasaLlegada;
+        }
+        //ρ - Tasa de utilización
+        function calcular_p_mmm(tasaLlegada, tasaServicio, servidores) {
+            return tasaLlegada / servidores * tasaServicio;
+        }
+
+        let costodiarioespera = 0;
+        let costodiarioservicio = 0;
+
+        function calcular_costodiarioespera_mmm(costoespera, costohoras, tasaLlegada, tasaServicio, servidores) {
+            costodiarioespera = costohoras * tasaLlegada * calcular_Wq_mmm(tasaLlegada, tasaServicio, servidores) * costoespera;
+            return costodiarioespera
+        }
+
+        function calcular_costodiarioservicio_mmm(costoservicio, costohoras, servidores) {
+            costodiarioservicio = costohoras * servidores * costoservicio;
+            return costodiarioservicio
+        }
+
+        function calcular_costodiariosistema_mmm() {
+            return costodiarioespera + costodiarioservicio;
+        }
+
+        function resolver_mmm(tasaLlegada, tasaServicio, servidores) {
+            //Resolver paso a paso
+            const resultadoP0 = calcular_P0_mmm(tasaLlegada, tasaServicio, servidores);
+            const resultadoL = calcular_L_mmm(tasaLlegada, tasaServicio, servidores);
+            const resultadoW = calcular_w_mmm(tasaLlegada, tasaServicio, servidores);
+            const resultadoLq = calcular_Lq_mmm(tasaLlegada, tasaServicio, servidores);
+            const resultadoWq = calcular_Wq_mmm(tasaLlegada, tasaServicio, servidores);
+            const resultadop = calcular_p_mmm(tasaLlegada, tasaServicio, servidores);
+
+            const resultado_costoespera = calcular_costodiarioespera_mmm(costoespera, costohoras, tasaLlegada, tasaServicio, servidores);
+            const resultado_costoservicio = calcular_costodiarioservicio_mmm(costoservicio, costohoras, servidores);
+            const resultado_costosistema = calcular_costodiariosistema_mmm();
+
+            //Mostrar los datos
+            document.getElementById("modulo_mostrarresultados_mmm").style.display = "block";
+            document.getElementById("modulo_mostrarresultados_mm1").style.display = "none";
+
+            document.getElementById("mostrarresultado_P0_mmm").innerHTML = resultadoP0.toFixed(3) + "<hr>" + (resultadoP0.toFixed(1) * 100) + "%";
+            document.getElementById("mostrarresultado_L_mmm").innerHTML = resultadoL.toFixed(3) + " clientes";
+            if (resultadoW < 1) {
+                document.getElementById("mostrarresultado_W_mmm").innerHTML = resultadoW.toFixed(3) + "<hr>" + (resultadoW.toFixed(2) * 60) + " minutos";
+            } else {
+                document.getElementById("mostrarresultado_W_mmm").innerHTML = resultadoW.toFixed(3) + " horas";
+            }
+            document.getElementById("mostrarresultado_Lq_mmm").innerHTML = resultadoLq.toFixed(3) + " clientes";
+
+            if (resultadoWq < 1) {
+                document.getElementById("mostrarresultado_Wq_mmm").innerHTML = resultadoWq.toFixed(3) + "<hr>" + (resultadoWq.toFixed(1) * 60) + " minutos";
+            } else {
+                document.getElementById("mostrarresultado_Wq_mmm").innerHTML = resultadoWq.toFixed(3) + " horas";
+            }
+            document.getElementById("mostrarresultado_p_mmm").innerHTML = resultadop.toFixed(3) + "<hr>" + (resultadop.toFixed(3) * 100) + "%";
+
+            document.getElementById("mostrarresultado_costodiarioespera_mmm").innerHTML = "$" + resultado_costoespera.toFixed(3);
+            document.getElementById("mostrarresultado_costodiarioservicio_mmm").innerHTML = "$" + resultado_costoservicio.toFixed(3);
+            document.getElementById("mostrarresultado_costototalsistema_mmm").innerHTML = "$" + resultado_costosistema.toFixed(3);
         }
 
         class Aeropuerto {
@@ -129,9 +894,11 @@
 
             async revisarDocumentos(nombre) {
                 // Simular tiempo de revisión de documentos
-                await this.sleep(Math.random() * frecuenciaAtencion);
-                //await this.sleep(Math.random() * 2000 + 1000);
-
+                if (tipomodelo == "mm1") {
+                    await this.sleep(Math.random() * tasaatencion_simulacion);    
+                } else {
+                    await this.sleep(Math.floor(Math.random() * (tasaatencion_simulacion - 1000 + 1)) + 1000);
+                }
                 // Devolver un resultado aleatorio (true si los documentos están en regla, false si no)
                 return Math.random() < 0.8;
             }
@@ -211,18 +978,12 @@
             const nombre = nombres[Math.floor(Math.random() * nombres.length)];
             aeropuerto.llegadaPasajero(nombre);
         }
-
-        setInterval(llegadaPasajero, frecuenciaLlegada);
-
         function abordarVuelo() {
             const pasajero = aeropuerto.fila.find(p => p.estado === 'En regla ✔');
             if (pasajero) {
                 aeropuerto.abordarVuelo(pasajero.nombre);
             }
         }
-
-        setInterval(abordarVuelo, frecuenciaAtencion);
-
         function abandonarAeropuerto() {
             const pasajero = aeropuerto.fila.find(p => p.estado === 'No en regla ❌');
             if (pasajero) {
@@ -230,8 +991,12 @@
             }
         }
 
-        setInterval(abandonarAeropuerto, frecuenciaAtencion);
     </script>
+
+    <!-- Librería MathJax -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
 </body>
 
 </html>
